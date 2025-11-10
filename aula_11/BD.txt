@@ -1,0 +1,53 @@
+PHPMYADMIN
+
+CREATE DATABASE clube_escrita;
+
+CREATE TABLE clube_escrita.usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome_completo VARCHAR(150) NOT NULL,
+    usuario VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    data_nascimento DATE,
+    cpf VARCHAR(14),
+    senha VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE clube_escrita.submissoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    titulo VARCHAR(255) NOT NULL,
+    observacoes TEXT,
+    arquivo VARCHAR(255),
+    data_submissao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE clube_escrita.avaliacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    submissao_id INT,
+    usuario_id INT,
+    aprovado VARCHAR(20),
+    comentario TEXT,
+    data_avaliacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (submissao_id) REFERENCES submissoes(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE clube_escrita.atividades (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    titulo VARCHAR(255) NOT NULL,
+    comentario TEXT,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+CREATE TABLE clube_escrita.participacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    atividade_id INT,
+    usuario_id INT,
+    comentario TEXT,
+    data_participacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (atividade_id) REFERENCES atividades(id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
