@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora API</title>
+    <style>
+        body { font-family: sans-serif; display: grid; place-items: center; }
+        .calculadora { border: 2px solid black; border-radius: 5px; padding: 10px; background-color: #f0f0f0; }
+        #display {
+            width: 95%; height: 50px; font-size: 24px; text-align: right;
+            margin-bottom: 10px; padding-right: 10px;
+        }
+        .teclas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .teclas button { height: 50px; font-size: 18px; }
+        .tecla-zero { grid-column: span 2; }
+        .tecla-igual { grid-row: span 2; height: 105px; }
+        .tecla-op { background-color: #ffb84d; }
+        .tecla-mem { background-color: #d9d9d9; }
+    </style>
+</head>
+<body>
+    <h1>Calculadora com API</h1>
+    <div class="calculadora">
+        <input type="text" id="display" disabled>
+        <div class="teclas">
+            <button class="tecla-mem" onclick="apiMemoria('mc')">MC</button>
+            <button class="tecla-mem" onclick="apiMemoria('mr')">MR</button>
+            <button class="tecla-mem" onclick="apiMemoria('mminus')">M-</button>
+            <button class="tecla-mem" onclick="apiMemoria('mplus')">M+</button>
+            
+            <button onclick="limpar()">C</button>
+            <button class="tecla-op" onclick="apiRaiz()">√</button>
+            <button class="tecla-op" onclick="definirOperador('divide')">÷</button>
+            <button class="tecla-op" onclick="definirOperador('multiplica')">×</button>
+
+            <button onclick="adicionarNumero('7')">7</button>
+            <button onclick="adicionarNumero('8')">8</button>
+            <button onclick="adicionarNumero('9')">9</button>
+            <button class="tecla-op" onclick="definirOperador('subtrai')">-</button>
+
+            <button onclick="adicionarNumero('4')">4</button>
+            <button onclick="adicionarNumero('5')">5</button>
+            <button onclick="adicionarNumero('6')">6</button>
+            <button class="tecla-op" onclick="definirOperador('soma')">+</button>
+
+            <button onclick="adicionarNumero('1')">1</button>
+            <button onclick="adicionarNumero('2')">2</button>
+            <button onclick="adicionarNumero('3')">3</button>
+            <button class="tecla-igual" onclick="apiCalcular()">=</button>
+
+            <button class="tecla-zero" onclick="adicionarNumero('0')">0</button>
+            <button onclick="adicionarNumero('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        var display = document.getElementById('display');
+        var valorAtual = '';
+        var valorAnterior = '';
+        var operador = '';
+
+        function adicionarNumero(num) {
+            valorAtual += num;
+            display.value = valorAtual;
+        }
+
+        function limpar() {
+            valorAtual = '';
+            valorAnterior = '';
+            operador = '';
+            display.value = '';
+        }
+
+        function definirOperador(op) {
+            if (valorAtual === '') return;
+            if (valorAnterior !== '') {
+                apiCalcular();
+            }
+            valorAnterior = valorAtual;
+            valorAtual = '';
+            operador = op;
+        }
+
+        function apiCalcular() {
+            if (valorAnterior === '' || valorAtual === '' || operador === '') return;
+            
+            var url = 'api/' + operador + '.php?n1=' + valorAnterior + '&n2=' + valorAtual;
+            
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var resposta = JSON.parse(this.responseText);
+                display.value = resposta.resultado;
+                valorAtual = resposta.resultado;
+                valorAnterior = '';
+                operador = '';
+            }
+            xhttp.open("GET", url);
+            xhttp.send();
+        }
+
+        function apiRaiz() {
+            if (valorAtual === '') return;
+            var url = 'api/raiz.php?n1=' + valorAtual;
+            
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var resposta = JSON.parse(this.responseText);
+                display.value = resposta.resultado;
+                valorAtual = resposta.resultado;
+            }
+            xhttp.open("GET", url);
+            xhttp.send();
+        }
+
+        function apiMemoria(acao) {
+            var url = 'api/' + acao + '.php';
+
+            if (acao === 'mplus' || acao === 'mminus') {
+                if (valorAtual === '') return;
+                url += '?valor=' + valorAtual;
+            }
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                if (acao === 'mr') {
+                    var resposta = JSON.parse(this.responseText);
+                    display.value = resposta.valor;
+                    valorAtual = resposta.valor;
+                } else {
+                    alert('Operação de memória (' + acao + ') concluída!');
+                }
+            }
+            xhttp.open("GET", url);
+            xhttp.send();
+        }
+    </script>
+</body>
+</html>
