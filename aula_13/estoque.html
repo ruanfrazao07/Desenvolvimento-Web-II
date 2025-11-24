@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Estoque</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script>
+        window.onload = function() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var produtos = JSON.parse(this.responseText);
+                
+                if (produtos.erro) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                var tabela = document.getElementById('tabela-corpo');
+                tabela.innerHTML = "";
+
+                for (var i = 0; i < produtos.length; i++) {
+                    var p = produtos[i];
+                    var classeCss = "";
+
+                    if (parseInt(p.quantidade) < parseInt(p.estoque_minimo)) {
+                        classeCss = "alerta";
+                    }
+
+                    tabela.innerHTML += 
+                        "<tr class='" + classeCss + "'>" +
+                            "<td>" + p.nome + "</td>" +
+                            "<td>" + p.quantidade + " (Min: " + p.estoque_minimo + ")</td>" +
+                            "<td>" + p.validade + "</td>" +
+                            "<td>R$ " + p.preco + "</td>" +
+                        "</tr>";
+                }
+            };
+            xhttp.open("GET", "api/listar_produtos.php");
+            xhttp.send();
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="menu">
+            <a href="novo_produto.html">Novo Produto</a>
+            <a href="movimentacao.html">Movimentações</a>
+            <a href="estoque.html">Ver Estoque</a>
+            <a href="login.html" style="float: right; color: red;">Sair</a>
+            <div style="clear: both;"></div>
+        </div>
+
+        <h2>Estoque Atual</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Quantidade</th>
+                    <th>Validade</th>
+                    <th>Preço</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-corpo">
+                </tbody>
+        </table>
+    </div>
+</body>
+</html>

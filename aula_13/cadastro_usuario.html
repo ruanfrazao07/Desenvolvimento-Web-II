@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuário</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script>
+        function cadastrar() {
+            var form = document.getElementById('formCadastro');
+            var dados = new FormData(form);
+
+            var senha1 = document.getElementById('senha').value;
+            var senha2 = document.getElementById('senha2').value;
+
+            if (senha1 !== senha2) {
+                alert("As senhas não conferem!");
+                return;
+            }
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var resposta = JSON.parse(this.responseText);
+                
+                if (resposta.erro) {
+                    alert(resposta.erro);
+                } else {
+                    alert(resposta.status);
+                    window.location.href = 'login.html';
+                }
+            };
+            xhttp.open("POST", "api/cadastro_usuario.php");
+            xhttp.send(dados);
+        }
+    </script>
+</head>
+<body>
+    <div class="container" style="width: 350px; text-align: center;">
+        <h2>Novo Usuário</h2>
+        
+        <form id="formCadastro" onsubmit="event.preventDefault(); cadastrar();">
+            <input type="text" name="usuario" placeholder="Nome de Usuário" required><br>
+            <input type="password" name="senha" id="senha" placeholder="Senha" required><br>
+            <input type="password" id="senha2" placeholder="Confirme a Senha" required><br>
+            <br>
+            <button type="submit">Cadastrar</button>
+        </form>
+        
+        <br>
+        <a href="login.html">Voltar para Login</a>
+    </div>
+</body>
+</html>

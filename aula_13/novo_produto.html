@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Produto</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script>
+        function salvarProduto() {
+            var form = document.getElementById('formProduto');
+            var dados = new FormData(form);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var resposta = JSON.parse(this.responseText);
+                alert(resposta.status || resposta.erro);
+                if (resposta.status) {
+                    form.reset();
+                }
+            };
+            xhttp.open("POST", "api/salva_produto.php");
+            xhttp.send(dados);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="menu">
+            <a href="novo_produto.html">Novo Produto</a>
+            <a href="movimentacao.html">Movimentações</a>
+            <a href="estoque.html">Ver Estoque</a>
+            <a href="login.html" style="float: right; color: red;">Sair</a>
+            <div style="clear: both;"></div>
+        </div>
+
+        <h2>Cadastro de Produto</h2>
+        <form id="formProduto" onsubmit="event.preventDefault(); salvarProduto();">
+            Nome: <input type="text" name="nome" required><br>
+            Descrição: <textarea name="descricao"></textarea><br>
+            Validade: <input type="date" name="validade"><br>
+            Qtd. Estoque: <input type="number" name="quantidade" required><br>
+            Estoque Mínimo: <input type="number" name="minimo" required><br>
+            Preço: <input type="number" step="0.01" name="preco"><br>
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+</body>
+</html>

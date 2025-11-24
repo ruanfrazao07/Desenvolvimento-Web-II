@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimentação</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script>
+        var listaProdutos = [];
+
+        window.onload = function() {
+            carregarProdutos();
+        };
+
+        function carregarProdutos() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                listaProdutos = JSON.parse(this.responseText);
+                var select = document.getElementById('select-produto');
+                
+                select.innerHTML = "<option value=''>Selecione...</option>";
+                
+                for (var i = 0; i < listaProdutos.length; i++) {
+                    var prod = listaProdutos[i];
+                    select.innerHTML += "<option value='" + prod.id + "'>" + prod.nome + "</option>";
+                }
+            };
+            xhttp.open("GET", "api/listar_produtos.php");
+            xhttp.send();
+        }
+
+        function preencherCampos() {
+            var idSelecionado = document.getElementById('select-produto').value;
+            var produtoEncontrado = null;
+
+            for (var i = 0; i < listaProdutos.length; i++) {
+                if (listaProdutos[i].id == idSelecionado) {
+                    produtoEncontrado = listaProdutos[i];
+                    break;
+                }
+            }
+
+            if (produtoEncontrado) {
+                document.getElementById('id_produto').value = produtoEncontrado.id;
+                document.getElementById('quantidade').value = produtoEncontrado.quantidade;
+                document.getElementById('preco').value = produtoEncontrado.preco;
+                document.getElementById('validade').value = produtoEncontrado.validade;
+            }
+        }
+
+        function salvarMovimentacao() {
+            var form = document.getElementById('formMov');
+            var dados = new FormData(form);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                var resposta = JSON.parse(this.responseText);
+                alert(resposta.status || resposta.erro);
+                if (resposta.status) {
+                    location.reload();
+                }
+            };
+            xhttp.open("POST", "api/atualiza_movimentacao.php");
+            xhttp.send(dados);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="menu">
+            <a href="novo_produto.html">Novo Produto</a>
+            <a href="movimentacao.html">Movimentações</a>
+            <a href="estoque.html">Ver Estoque</a>
+            <a href="login.html" style="float: right; color: red;">Sair</a>
+            <div style="clear: both;"></div>
+        </div>
+
+        <h2>Movimentações</h2>
+        <label>Produto:</label>
+        <select id="select-produto" onchange="preencherCampos()">
+            <option>Carregando...</option>
+        </select>
+        <hr>
+
+        <form id="formMov" onsubmit="event.preventDefault(); salvarMovimentacao();">
+            <input type="hidden" name="id_produto" id="id_produto">
+            
+            Qtd (Atualize o valor):<br>
+            <input type="number" name="quantidade" id="quantidade"><br>
+
+            Preço:<br>
+            <input type="number" step="0.01" name="preco" id="preco"><br>
+
+            Validade:<br>
+            <input type="date" name="validade" id="validade"><br>
+
+            <button type="submit">Salvar Alterações</button>
+        </form>
+    </div>
+</body>
+</html>
