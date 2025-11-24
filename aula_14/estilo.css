@@ -1,0 +1,12 @@
+body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+.container { width: 900px; margin: 0 auto; background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+input, textarea { width: 95%; padding: 10px; margin: 5px 0; border: 1px solid #999; }
+button { padding: 10px 20px; background: #0056b3; color: white; border: none; cursor: pointer; font-size: 16px; margin: 5px; }
+button:hover { background: #004494; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+table, th, td { border: 1px solid #333; }
+th, td { padding: 10px; text-align: left; }
+.aprovado { background-color: #d4edda; color: #155724; }
+.reprovado { background-color: #f8d7da; color: #721c24; }
+.cursando { background-color: #fff3cd; color: #856404; }
+.menu-btn { background-color: #6c757d; }

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Progresso</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="container">
+        <div style="float:right">
+            <a href="importar.html"><button style="background: green">Atualizar/Importar Notas</button></a>
+            <a href="index.html"><button style="background: red">Sair</button></a>
+        </div>
+        <h2>Meu Histórico Escolar</h2>
+        <hr>
+        
+        <div id="botoes-semestre">
+            <button class="menu-btn" onclick="carregarNotas('')">Todos</button>
+            <button class="menu-btn" onclick="carregarNotas(1)">1º Sem</button>
+            <button class="menu-btn" onclick="carregarNotas(2)">2º Sem</button>
+            <button class="menu-btn" onclick="carregarNotas(3)">3º Sem</button>
+            <button class="menu-btn" onclick="carregarNotas(4)">4º Sem</button>
+            <button class="menu-btn" onclick="carregarNotas(5)">5º Sem</button>
+            <button class="menu-btn" onclick="carregarNotas(6)">6º Sem</button>
+        </div>
+
+        <h3 id="titulo-tabela">Todas as disciplinas</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Semestre</th>
+                    <th>Disciplina</th>
+                    <th>Nota</th>
+                    <th>Situação</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-corpo">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        window.onload = function() {
+            carregarNotas('');
+        };
+
+        function carregarNotas(semestre) {
+            let url = "api/listar_notas.php";
+            if (semestre) {
+                url += "?semestre=" + semestre;
+                document.getElementById('titulo-tabela').innerText = semestre + "º Semestre";
+            } else {
+                document.getElementById('titulo-tabela').innerText = "Todas as disciplinas";
+            }
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                let notas = JSON.parse(this.responseText);
+                let html = "";
+
+                if(!Array.isArray(notas)) { window.location.href='index.html'; return; }
+
+                if (notas.length === 0) {
+                    html = "<tr><td colspan='4'>Nenhuma nota encontrada. Clique em 'Importar'.</td></tr>";
+                }
+
+                for(let i=0; i < notas.length; i++) {
+                    let n = notas[i];
+                    let classe = "";
+                    
+                    // Lógica das cores
+                    if(n.situacao.includes("Aprovado")) classe = "aprovado";
+                    else if(n.situacao.includes("Reprovado")) classe = "reprovado";
+                    else classe = "cursando";
+
+                    html += `
+                        <tr class="${classe}">
+                            <td>${n.semestre}</td>
+                            <td>${n.disciplina}</td>
+                            <td>${n.nota}</td>
+                            <td>${n.situacao}</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById('tabela-corpo').innerHTML = html;
+            }
+            xhttp.open("GET", url);
+            xhttp.send();
+        }
+    </script>
+</body>
+</html>

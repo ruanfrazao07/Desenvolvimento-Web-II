@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Importar Histórico</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Passo 1: Copiar e Colar</h2>
+        <p>Vá no SUAP, selecione a tabela de notas inteira (com cabeçalho e tudo), dê Ctrl+C e cole abaixo:</p>
+        
+        <textarea id="texto-suap" rows="10" placeholder="Cole aqui..."></textarea>
+        <br>
+        <button onclick="salvarHistorico()">Processar Histórico</button>
+        <a href="painel.html">Voltar</a>
+    </div>
+
+    <script>
+        function salvarHistorico() {
+            let texto = document.getElementById('texto-suap').value;
+            let dados = new FormData();
+            dados.append('historico', texto);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                let res = JSON.parse(this.responseText);
+                alert(res.status);
+                window.location.href = 'painel.html';
+            }
+            xhttp.open("POST", "api/salva_historico.php");
+            xhttp.send(dados);
+        }
+    </script>
+</body>
+</html>
