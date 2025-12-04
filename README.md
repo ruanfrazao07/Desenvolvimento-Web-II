@@ -1,3 +1,3 @@
-# DESESENVOLVIMENTO WEB
+#Desenvolvimento Web
 
-## Aula do 4º Semestre onde demos iniciativa com php do básico ao consumo de API
+##Atividade do 4º semestre, onde iniciamos o estudo de PHP — desde os conceitos básicos até o consumo de APIs.
